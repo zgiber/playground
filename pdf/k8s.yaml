@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: pdf-renderer
-          image: docker.io/zgiber/chromedp:stable
+          image: docker.io/zgiber/chromedp:3
           imagePullPolicy: Always
           resources:
             limits:
