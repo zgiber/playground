@@ -62,7 +62,14 @@ func HandlePrintPDFRequest(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	w.Header().Add("Content-Type", "application/pdf")
-	err := chromedp.Run(chromeCtx, printToPDF(r.Body, w))
+	requestPayload, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = chromedp.Run(chromeCtx, printToPDF(requestPayload, w))
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -71,7 +78,7 @@ func HandlePrintPDFRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 // print a specific pdf page.
-func printToPDF(contents io.Reader, res io.Writer) chromedp.Tasks {
+func printToPDF(payload []byte, res io.Writer) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.Navigate("about:blank"),
 		chromedp.ActionFunc(func(ctx context.Context) error {
@@ -80,12 +87,7 @@ func printToPDF(contents io.Reader, res io.Writer) chromedp.Tasks {
 				return err
 			}
 
-			html, err := ioutil.ReadAll(contents)
-			if err != nil {
-				return err
-			}
-
-			if err := page.SetDocumentContent(frameTree.Frame.ID, string(html)).Do(ctx); err != nil {
+			if err := page.SetDocumentContent(frameTree.Frame.ID, string(payload)).Do(ctx); err != nil {
 				return err
 			}
 
