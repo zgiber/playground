@@ -92,8 +92,8 @@ func printToPDF(contents io.Reader, res io.Writer) chromedp.Tasks {
 			buf, _, err := page.PrintToPDF().
 				WithPrintBackground(true).
 				WithLandscape(false).
-				WithPaperHeight(297.0 / 2.54).
-				WithPaperWidth(210 / 2.54).
+				WithPaperHeight(297.0 / 25.4).
+				WithPaperWidth(210 / 25.4).
 				WithDisplayHeaderFooter(false).
 				WithMarginBottom(0.0).
 				WithMarginLeft(0.0).
