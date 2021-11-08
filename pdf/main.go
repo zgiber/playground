@@ -61,6 +61,7 @@ func HandlePrintPDFRequest(w http.ResponseWriter, r *http.Request) {
 	chromeCtx, cancel := chromedp.NewContext(requestCtx)
 	defer cancel()
 
+	w.Header().Add("Content-Type", "application/pdf")
 	err := chromedp.Run(chromeCtx, printToPDF(r.Body, w))
 	if err != nil {
 		log.Println(err)
@@ -72,6 +73,7 @@ func HandlePrintPDFRequest(w http.ResponseWriter, r *http.Request) {
 // print a specific pdf page.
 func printToPDF(contents io.Reader, res io.Writer) chromedp.Tasks {
 	return chromedp.Tasks{
+		chromedp.Navigate("about:blank"),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			frameTree, err := page.GetFrameTree().Do(ctx)
 			if err != nil {

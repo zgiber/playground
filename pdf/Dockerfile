@@ -7,4 +7,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -o pdfrender
 
 FROM chromedp/headless-shell:latest
 COPY --from=builder /app/pdfrender ./
-CMD ["/pdfrender"]
+ENTRYPOINT ["/pdfrender"]
