@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: exp
+  labels:
+    app: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: regsitry
+  template:
+    metadata:
+      labels:
+        app: regsitry
+        role: regsitry
+    spec:
+      containers:
+        - name: regsitry
+          image: registry:2
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "100m"
+            requests:
+              memory: "128Mi"
+              cpu: "30m"
+          ports:
+            - containerPort: 5000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: regsitry
+  namespace: exp
+  labels:
+    run: regsitry
+    role: regsitry
+spec:
+  ports:
+    - port: 5000
+      protocol: TCP
+  selector:
+    app: regsitry
